@@ -1,11 +1,11 @@
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel, conlist
+from pydantic import BaseModel
 from typing import List, Dict, Any
 
 router = APIRouter()
 
 class PredictXIRequest(BaseModel):
-    players: conlist(str, min_items=22, max_items=22)
+    players: List[str]
     factors: List[str]
 
 class PlayerPrediction(BaseModel):
