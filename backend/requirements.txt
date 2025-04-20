@@ -1,0 +1,12 @@
+fastapi
+uvicorn[standard]
+scikit-learn
+pandas
+numpy
+psycopg2-binary
+motor
+pydantic
+python-dotenv
+redis
+boto3
+optuna
