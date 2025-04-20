@@ -1,4 +1,5 @@
 import React, { createContext, useReducer } from "react";
+import axios from "axios";
 
 const initialState = {
   players: [],
@@ -32,5 +33,30 @@ function reducer(state, action) {
 export const AppProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  return <AppContext.Provider value={{ state, dispatch }}>{children}</AppContext.Provider>;
+  const predictXI = async () => {
+    if (state.players.length !== 22) {
+      dispatch({ type: "PREDICTION_ERROR", payload: "Exactly 22 unique players required." });
+      return;
+    }
+    if (state.factors.length === 0) {
+      dispatch({ type: "PREDICTION_ERROR", payload: "Please select at least one factor." });
+      return;
+    }
+    dispatch({ type: "PREDICTION_LOADING" });
+    try {
+      const response = await axios.post("/api/predict-xi", {
+        players: state.players,
+        factors: state.factors,
+      });
+      dispatch({ type: "PREDICTION_SUCCESS", payload: response.data });
+    } catch (error) {
+      dispatch({ type: "PREDICTION_ERROR", payload: error.message || "Prediction failed." });
+    }
+  };
+
+  return (
+    <AppContext.Provider value={{ state, dispatch, predictXI }}>
+      {children}
+    </AppContext.Provider>
+  );
 };
